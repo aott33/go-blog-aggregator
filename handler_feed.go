@@ -59,3 +59,39 @@ func handlerGetFeeds(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerFollowFeed(s *state, cmd command) error {
+	if len(cmd.args) == 0 {
+		return errors.New("url is required")
+	}
+
+	url := cmd.args[0]
+
+	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return err
+	}
+	userID := user.ID
+
+	feed, err := s.db.GetFeed(context.Background(), url)
+	if err != nil {
+		return err
+	}
+	feedID := feed.ID
+
+	followFeed, err := s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{
+		ID: 		uuid.New(),
+		CreatedAt: 	time.Now(),
+		UpdatedAt: 	time.Now(),
+		UserID:		userID,
+		FeedID: 	feedID,
+	})
+	
+	fmt.Printf("Feed Follow Created:\n- User: %s\n - Feed: %s\n", followFeed.UserName, followFeed.FeedName)
+
+	return nil
+}
+
+func handlerGetFeedFollows(s *state, cmd command) error {
+	return nil
+}
