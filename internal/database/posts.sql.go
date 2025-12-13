@@ -74,9 +74,10 @@ func (q *Queries) CreatePosts(ctx context.Context, arg CreatePostsParams) (Post,
 }
 
 const getPosts = `-- name: GetPosts :many
-SELECT posts.id, posts.created_at, posts.updated_at, title, posts.url, description, published_at, feed_id, feeds.id, feeds.created_at, feeds.updated_at, name, feeds.url, user_id, last_fetched_at FROM posts
-INNER JOIN feeds ON feed_follows
-WHERE user_id = $1
+SELECT posts.id, posts.created_at, posts.updated_at, posts.title, posts.url, posts.description, posts.published_at, posts.feed_id, feeds.name AS feed_name FROM posts
+INNER JOIN feed_follows ON feed_follows.feed_id = posts.feed_id
+INNER JOIN feeds ON posts.feed_id = feeds.id
+WHERE feed_follows.user_id = $1
 ORDER BY published_at DESC
 LIMIT $2
 `
@@ -87,21 +88,15 @@ type GetPostsParams struct {
 }
 
 type GetPostsRow struct {
-	ID            uuid.UUID
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	Title         string
-	Url           string
-	Description   sql.NullString
-	PublishedAt   sql.NullTime
-	FeedID        uuid.UUID
-	ID_2          uuid.UUID
-	CreatedAt_2   time.Time
-	UpdatedAt_2   time.Time
-	Name          string
-	Url_2         string
-	UserID        uuid.UUID
-	LastFetchedAt sql.NullTime
+	ID          uuid.UUID
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Title       string
+	Url         string
+	Description sql.NullString
+	PublishedAt sql.NullTime
+	FeedID      uuid.UUID
+	FeedName    string
 }
 
 func (q *Queries) GetPosts(ctx context.Context, arg GetPostsParams) ([]GetPostsRow, error) {
@@ -122,13 +117,7 @@ func (q *Queries) GetPosts(ctx context.Context, arg GetPostsParams) ([]GetPostsR
 			&i.Description,
 			&i.PublishedAt,
 			&i.FeedID,
-			&i.ID_2,
-			&i.CreatedAt_2,
-			&i.UpdatedAt_2,
-			&i.Name,
-			&i.Url_2,
-			&i.UserID,
-			&i.LastFetchedAt,
+			&i.FeedName,
 		); err != nil {
 			return nil, err
 		}
