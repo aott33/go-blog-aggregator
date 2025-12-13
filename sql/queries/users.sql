@@ -15,5 +15,11 @@ WHERE name = $1;
 -- name: GetUsers :many
 SELECT name FROM users;
 
--- name: Reset :exec
+-- name: ResetFeedFollows :exec
+DELETE FROM feed_follows;
+
+-- name: ResetFeeds :exec
+DELETE FROM feeds;
+
+-- name: ResetUsers :exec
 DELETE FROM users;
