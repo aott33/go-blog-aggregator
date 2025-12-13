@@ -16,8 +16,20 @@ You need the following installed:
 
 ## Installation
 
+1. Clone the repository:
 ```bash
-go install github.com/aott33/gator@latest
+git clone https://github.com/aott33/gator.git
+cd gator
+```
+
+2. Build the application:
+```bash
+go build -o gator
+```
+
+3. Optionally, install it to your `$GOPATH/bin`:
+```bash
+go install
 ```
 
 ## Configuration
@@ -35,14 +47,14 @@ Replace `username`, `password`, and `gator` with your PostgreSQL credentials and
 ## Commands
 
 ```bash
-gator register <name>    # Create a new user
-gator login <name>       # Login as a user
-gator users              # List all users
+gator register <name>       # Create a new user
+gator login <name>          # Login as a user
+gator users                 # List all users
 gator addfeed <name> <url>  # Add an RSS feed
-gator feeds              # List all feeds
-gator follow <url>       # Follow a feed
-gator following          # List feeds you follow
-gator unfollow <url>     # Unfollow a feed
-gator agg <interval>     # Start aggregating feeds (e.g., "1m" for every minute)
-gator browse [limit]     # View collected posts
+gator feeds                 # List all feeds
+gator follow <url>          # Follow a feed
+gator following             # List feeds you follow
+gator unfollow <url>        # Unfollow a feed
+gator agg <interval>        # Start aggregating feeds (e.g., "1m" for every minute)
+gator browse [limit]        # View collected posts - limits to 2 by default
 ```
